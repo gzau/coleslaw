@@ -50,56 +50,87 @@ To make coleslaw **always active** in the current repo without invocation, pass 
 
 ### Cursor
 
+Global only — invoke with `/coleslaw`:
+
 ```bash
-# global only — invoke with /coleslaw
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/cursor.sh | bash
+```
 
-# also always-on for the current repo (writes .cursor/rules/coleslaw.mdc)
+Also always-on for the current repo (writes `.cursor/rules/coleslaw.mdc`):
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/cursor.sh | bash -s -- --always-on
+```
 
-# uninstall
+Uninstall:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/cursor.sh | bash -s -- --uninstall
 ```
 
 ### Claude Code
 
+Global only — applied when description matches:
+
 ```bash
-# global only — applied when description matches
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/claude-code.sh | bash
+```
 
-# also always-on for the current repo (injects coleslaw block into ./AGENTS.md)
+Also always-on for the current repo (injects coleslaw block into `./AGENTS.md`):
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/claude-code.sh | bash -s -- --always-on
+```
 
-# uninstall
+Uninstall:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/claude-code.sh | bash -s -- --uninstall
 ```
 
 ### Codex
 
+Global only — applied when description matches:
+
 ```bash
-# global only — applied when description matches
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/codex.sh | bash
+```
 
-# also always-on for the current repo (injects coleslaw block into ./AGENTS.md)
+Also always-on for the current repo (injects coleslaw block into `./AGENTS.md`):
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/codex.sh | bash -s -- --always-on
+```
 
-# uninstall
+Uninstall:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/codex.sh | bash -s -- --uninstall
 ```
 
 ### Install everything at once
 
+Every detected tool, global registration:
+
 ```bash
-# every detected tool, global registration
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash
+```
 
-# also always-on for the current repo
+Also always-on for the current repo:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash -s -- --always-on
+```
 
-# specific tools (positional args)
+Specific tools (positional args):
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash -s -- cursor claude-code
+```
 
-# uninstall for every detected tool
+Uninstall for every detected tool:
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash -s -- --uninstall
 ```
 
