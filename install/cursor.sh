@@ -15,7 +15,21 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_URL="https://github.com/gzau/coleslaw.git"
+SELF_REL="install/cursor.sh"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-}")" 2>/dev/null && pwd)" || SCRIPT_DIR=""
+if [[ -z "$SCRIPT_DIR" ]] || [[ ! -f "$SCRIPT_DIR/../skills/coleslaw/SKILL.md" ]]; then
+  command -v git >/dev/null 2>&1 || { echo "coleslaw: git is required for the remote install. install git and retry." >&2; exit 1; }
+  TMP="$(mktemp -d -t coleslaw.XXXXXX)"
+  echo "coleslaw: fetching repo into $TMP..."
+  git clone --depth 1 --quiet "$REPO_URL" "$TMP" || { echo "coleslaw: clone failed" >&2; rm -rf "$TMP"; exit 1; }
+  bash "$TMP/$SELF_REL" "$@"
+  rc=$?
+  rm -rf "$TMP"
+  exit $rc
+fi
+
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SKILL_SRC="$REPO_ROOT/skills/coleslaw/SKILL.md"
 

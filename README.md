@@ -42,49 +42,74 @@ Same fix. Faster to read in any language.
 
 ## Install
 
-coleslaw has one installer per tool. Each is self-contained. Clone the repo first.
+One per-tool installer, runnable remotely or from a local clone. `git` is required.
 
-By default the installer **registers** coleslaw globally for the chosen tool. You activate it per session with `/coleslaw` or "use coleslaw". To turn it off, say "no coleslaw".
+By default the installer **registers** coleslaw globally. You activate it per session with `/coleslaw` or "use coleslaw". To turn it off, say "no coleslaw".
 
-If you want coleslaw **always active** in the current repo without invocation, pass `--always-on`.
+To make coleslaw **always active** in the current repo without invocation, pass `--always-on`.
 
 ### Cursor
 
 ```bash
-./install/cursor.sh                # register globally, invoke with /coleslaw
-./install/cursor.sh --always-on    # also always-on in current repo (writes .cursor/rules/coleslaw.mdc)
-./install/cursor.sh --uninstall    # remove
+# global only — invoke with /coleslaw
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/cursor.sh | bash
+
+# also always-on for the current repo (writes .cursor/rules/coleslaw.mdc)
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/cursor.sh | bash -s -- --always-on
+
+# uninstall
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/cursor.sh | bash -s -- --uninstall
 ```
 
 ### Claude Code
 
 ```bash
-./install/claude-code.sh              # register globally, applied when description matches
-./install/claude-code.sh --always-on  # also always-on in current repo (injects coleslaw block into ./AGENTS.md)
-./install/claude-code.sh --uninstall  # remove
+# global only — applied when description matches
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/claude-code.sh | bash
+
+# also always-on for the current repo (injects coleslaw block into ./AGENTS.md)
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/claude-code.sh | bash -s -- --always-on
+
+# uninstall
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/claude-code.sh | bash -s -- --uninstall
 ```
 
 ### Codex
 
 ```bash
-./install/codex.sh              # register globally, applied when description matches
-./install/codex.sh --always-on  # also always-on in current repo (injects coleslaw block into ./AGENTS.md)
-./install/codex.sh --uninstall  # remove
+# global only — applied when description matches
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/codex.sh | bash
+
+# also always-on for the current repo (injects coleslaw block into ./AGENTS.md)
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/codex.sh | bash -s -- --always-on
+
+# uninstall
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install/codex.sh | bash -s -- --uninstall
 ```
 
 ### Install everything at once
 
-`./install.sh` is a thin wrapper that delegates to the per-tool scripts. It auto-detects which tools you have installed.
-
 ```bash
-./install.sh                            # every detected tool, global registration
-./install.sh --always-on                # also always-on in current repo
-./install.sh cursor claude-code         # specific tools (positional args)
-./install.sh cursor --always-on         # one tool, always-on for this repo
-./install.sh --uninstall                # remove for every detected tool
+# every detected tool, global registration
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash
+
+# also always-on for the current repo
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash -s -- --always-on
+
+# specific tools (positional args)
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash -s -- cursor claude-code
+
+# uninstall for every detected tool
+curl -fsSL https://raw.githubusercontent.com/gzau/coleslaw/main/install.sh | bash -s -- --uninstall
 ```
 
-If you only use one tool, call its script directly. The wrapper exists for convenience.
+### Or clone and run locally
+
+```bash
+git clone https://github.com/gzau/coleslaw.git
+cd coleslaw
+./install/cursor.sh --always-on   # any of the scripts above, same flags
+```
 
 ## How coleslaw activates (by tool)
 
