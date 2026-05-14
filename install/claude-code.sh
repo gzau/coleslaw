@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# coleslaw installer for Claude Code.
+#
+# Default: registers the skill globally.
+#   ~/.claude/skills/coleslaw/SKILL.md
+#   Claude Code auto-discovers it via description and applies when relevant.
+#
+# With --always-on: also injects a coleslaw block into AGENTS.md in the current repo.
+#   ./AGENTS.md   (block fenced with <!-- coleslaw-begin --> ... <!-- coleslaw-end -->)
+#   Claude Code reads AGENTS.md into every conversation, so coleslaw is active by default.
+#
+# Flags:
+#   --always-on    Make coleslaw always active in the current repo (auto-loaded via AGENTS.md).
+#   --uninstall    Remove installed files and (if --always-on) strip the AGENTS.md block.
+#   -h, --help     Show this help.
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SKILL_SRC="$REPO_ROOT/skills/coleslaw/SKILL.md"
+AGENTS_SRC="$REPO_ROOT/AGENTS.md"
+
+USER_DEST="$HOME/.claude/skills/coleslaw/SKILL.md"
+REPO_AGENTS="$PWD/AGENTS.md"
+
+ALWAYS_ON=0
+UNINSTALL=0
+
+usage() { sed -n '2,16p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --always-on) ALWAYS_ON=1; shift ;;
+    --uninstall) UNINSTALL=1; shift ;;
+    -h|--help)   usage; exit 0 ;;
+    *) echo "claude-code.sh: unknown flag: $1" >&2; usage; exit 1 ;;
+  esac
+done
+
+[[ ! -f "$SKILL_SRC" ]] && { echo "claude-code.sh: skill not found at $SKILL_SRC" >&2; exit 1; }
+
+inject_agents_block() {
+  local dest="$1"
+  if [[ -f "$dest" ]] && grep -q "coleslaw-begin" "$dest" 2>/dev/null; then
+    echo "  skipped (already present): $dest"
+    return
+  fi
+  {
+    [[ -f "$dest" ]] && cat "$dest" && echo
+    echo "<!-- coleslaw-begin -->"
+    cat "$AGENTS_SRC"
+    echo "<!-- coleslaw-end -->"
+  } > "$dest.tmp"
+  mv "$dest.tmp" "$dest"
+  echo "  installed: $dest"
+}
+
+strip_agents_block() {
+  local dest="$1"
+  [[ ! -f "$dest" ]] && return
+  awk '
+    /<!-- coleslaw-begin -->/ { skip=1; next }
+    /<!-- coleslaw-end -->/   { skip=0; next }
+    !skip { print }
+  ' "$dest" > "$dest.tmp"
+  mv "$dest.tmp" "$dest"
+  echo "  cleaned: $dest"
+}
+
+if [[ $UNINSTALL -eq 1 ]]; then
+  echo "claude-code: uninstalling..."
+  [[ -e "$HOME/.claude/skills/coleslaw" ]] && rm -rf "$HOME/.claude/skills/coleslaw" && echo "  removed: $HOME/.claude/skills/coleslaw"
+  [[ -f "$REPO_AGENTS" ]] && grep -q "coleslaw-begin" "$REPO_AGENTS" 2>/dev/null && strip_agents_block "$REPO_AGENTS"
+  echo "claude-code: done."
+  exit 0
+fi
+
+echo "claude-code: registering globally..."
+mkdir -p "$(dirname "$USER_DEST")"
+cp "$SKILL_SRC" "$USER_DEST"
+echo "  installed: $USER_DEST"
+
+if [[ $ALWAYS_ON -eq 1 ]]; then
+  echo "claude-code: enabling always-on for this repo via AGENTS.md..."
+  inject_agents_block "$REPO_AGENTS"
+  echo "claude-code: done. coleslaw is now loaded into every session in this repo."
+else
+  echo "claude-code: done. Claude Code will apply coleslaw when its description matches the task."
+fi
